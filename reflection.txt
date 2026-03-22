@@ -1,0 +1,44 @@
+# Memory Leak Observations
+
+In my inventory program, a memory leak happened when I used malloc() to allocate memory but forgot to use free() to release it. 
+This was shown clearly in the memory leak demo function, where memory was allocated inside a loop but never freed. 
+Because of that, every time the loop ran, more memory was taken up and never returned to the system.
+
+If this code ran 1000 times, the program would keep using more and more memory with each loop. 
+Over time, this could slow down the program or even cause it to crash. 
+If something like this happened in a real server running for days, it would be even worse. 
+The program could eventually use up all available memory, causing serious problems like freezing or shutting down. 
+This shows why memory leaks are dangerous and need to be fixed.
+
+Adding free() inside the loop fixed the problem. 
+Once I added free(temp_item);, the program released the memory after each use. 
+This means the same memory could be reused instead of wasting more and more space. 
+By freeing memory properly, the program runs more efficiently and avoids crashes.
+
+# Python vs C Memory Management
+
+Python handles memory automatically, which makes it much easier to use. 
+For example, if I create a list like inventory = [] and add items to it, I don’t have to worry about how memory is managed. 
+Python takes care of allocating and freeing memory in the background.
+
+In C, I had to do everything manually. I had to use malloc() to create space in memory, realloc() to make the arrays bigger, and free() to clean up when I was done. 
+I also had to check if memory allocation worked and make sure I didn’t use memory after freeing it. 
+If I made a mistake, the program could crash or behave incorrectly.
+
+Python uses something called a garbage collector to manage memory. 
+It keeps track of how many references point to each object. 
+When nothing is using an object anymore, Python automatically deletes it and frees the memory. 
+It also checks for objects that are stuck in loops (like referencing each other) and removes them if they are no longer needed. 
+This makes programming safer and easier compared to C.
+
+# Garbage Collection Trade-offs
+
+Even though Python’s garbage collection is helpful, it has some downsides. 
+It uses extra CPU power to track and clean up memory, and it also needs extra memory to store this information. 
+Sometimes, the program may pause briefly while the garbage collector is running, which can slow things down.
+
+Because of this, programmers working on systems like operating systems or embedded devices often choose C instead. 
+C gives full control over memory, which makes programs faster and more efficient. 
+It also avoids the extra work that garbage collection requires. 
+However, this comes with more responsibility, since mistakes like memory leaks or crashes can happen more easily. 
+Even with these risks, C is still preferred when performance and control are very important.
